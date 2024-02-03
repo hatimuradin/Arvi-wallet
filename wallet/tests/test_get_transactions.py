@@ -37,7 +37,7 @@ def test_read_user_transactions():
     db.add_all(transactions)
     db.flush()
 
-    response = client.get(f"/users/transactions?phone={users[0].phone}")
+    response = client.get(f"/users/{users[0].phone}/transactions")
     assert response.status_code == 200
     assert len(response.json()) == 3
 

@@ -26,17 +26,8 @@ def test_read_user_transactions():
     db.add_all(wallets)
     db.flush()
 
-    transactions = [
-        Transaction(uid="testuid1", amount=100, wallet_id=wallets[0].id),
-        Transaction(uid="testuid2", amount=150, wallet_id=wallets[0].id),
-        Transaction(uid="testuid3", amount=250, wallet_id=wallets[0].id),
-        Transaction(uid="testuid4", amount=200, wallet_id=wallets[1].id),
-    ]
-    db.add_all(transactions)
-    db.flush()
-
-    response = client.get(f"/users/transactions?phone={users[0].phone}")
+    response = client.get(f"/users/{users[0].phone}/balance")
     assert response.status_code == 200
-    assert len(response.json()) == 3
+    assert response.json() == {"balance": wallets[0].balance}
 
     drop_db()

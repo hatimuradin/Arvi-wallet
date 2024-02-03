@@ -6,3 +6,7 @@ class TransactionResponse(BaseModel):
     uid: str
     amount: int
     created_at: datetime
+
+
+class WalletBalance(BaseModel):
+    balance: int
