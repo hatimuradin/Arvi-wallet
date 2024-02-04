@@ -14,10 +14,10 @@ def on_startup():
     init_db()
 
 
-@app.get("users/{user_phone}/transactions", response_model=List[TransactionResponse])
+@app.get("/users/{user_phone}/transactions/", response_model=List[TransactionResponse])
 def read_user_transactions(user_phone: str):
     """
-    Api to return user's list of transactions
+    API to return user's list of transactions
     """
     transactions = db_handler.get_user_transactions(user_phone)
     if transactions is None:
@@ -26,10 +26,10 @@ def read_user_transactions(user_phone: str):
     return transactions
 
 
-@app.get("/users/{user_phone}/balance", response_model=WalletBalance)
+@app.get("/users/{user_phone}/balance/", response_model=WalletBalance)
 def read_user_balance(user_phone: str):
     """
-    Api to return user's balance
+    API to return user's balance
     """
     balance = db_handler.get_user_balance(user_phone)
     return balance

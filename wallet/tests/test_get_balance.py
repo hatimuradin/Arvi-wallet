@@ -26,7 +26,7 @@ def test_read_user_transactions():
     db.add_all(wallets)
     db.flush()
 
-    response = client.get(f"/users/{users[0].phone}/balance")
+    response = client.get(f"/users/{users[0].phone}/balance/")
     assert response.status_code == 200
     assert response.json() == {"balance": wallets[0].balance}
 

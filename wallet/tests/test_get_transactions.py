@@ -10,7 +10,6 @@ client = TestClient(app)
 
 
 def test_read_user_transactions():
-    client = TestClient(app)
     init_db()
     db = DBHandler().db
 
@@ -37,7 +36,7 @@ def test_read_user_transactions():
     db.add_all(transactions)
     db.flush()
 
-    response = client.get(f"/users/{users[0].phone}/transactions")
+    response = client.get(f"/users/{users[0].phone}/transactions/")
     assert response.status_code == 200
     assert len(response.json()) == 3
 

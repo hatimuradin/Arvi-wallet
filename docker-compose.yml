@@ -47,6 +47,7 @@ services:
       - DATABASE_URI=postgresql://${DISCOUNT_DB_USERNAME}:${DISCOUNT_DB_PASSWORD}@discount_db/${DISCOUNT_DB_NAME}
       - WALLET_SERVICE_HOST_URL=http://wallet_service:8000/api/v1/wallet/
     depends_on:
+      - redis_server
       - discount_db
 
   discount_db:
@@ -59,6 +60,14 @@ services:
       - POSTGRES_DB=${DISCOUNT_DB_NAME}
     env_file:
       - .env
+
+  redis_server:
+    restart: on-failure
+    container_name: redis
+    image: redis:latest
+    ports:
+      - 6379:6379
+
 
 volumes:
   postgres_data_wallet:
