@@ -21,8 +21,8 @@ def test_read_user_transactions():
     db.flush()
 
     wallets = [
-        Wallet(id=1, last_balance_update=datetime.now(), user_id=1, balance=20000),
-        Wallet(id=2, last_balance_update=datetime.now(), user_id=2, balance=10000),
+        Wallet(id=1, last_balance_update=datetime.utcnow(), user_id=1, balance=20000),
+        Wallet(id=2, last_balance_update=datetime.utcnow(), user_id=2, balance=10000),
     ]
     db.add_all(wallets)
     db.flush()

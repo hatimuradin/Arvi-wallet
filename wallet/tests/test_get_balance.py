@@ -6,8 +6,6 @@ from wallet.database import init_db, drop_db
 from wallet.models import User, Wallet, Transaction
 from wallet.crud import DBHandler
 
-client = TestClient(app)
-
 
 def test_read_user_transactions():
     client = TestClient(app)
@@ -21,7 +19,7 @@ def test_read_user_transactions():
     db.flush()
 
     wallets = [
-        Wallet(id=1, last_balance_update=datetime.now(), user_id=1, balance=20000),
+        Wallet(id=1, last_balance_update=datetime.utcnow(), user_id=1, balance=20000),
     ]
     db.add_all(wallets)
     db.flush()

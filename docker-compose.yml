@@ -49,6 +49,7 @@ services:
     depends_on:
       - redis_server
       - discount_db
+      - wallet_service
 
   discount_db:
     image: postgres:16.1-alpine

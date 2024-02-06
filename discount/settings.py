@@ -1,0 +1,2 @@
+DISCOUNT_DB_LOCK_NAME = "discount_db_lock"
+LOCK_BLOCKING_TIME_OUT = 10

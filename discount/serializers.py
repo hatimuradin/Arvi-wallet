@@ -1,6 +1,6 @@
-from typing import Annotated
+from typing import Annotated, Optional
 import datetime
-from pydantic import BaseModel, constr
+from pydantic import BaseModel
 
 
 class PhoneNumber(BaseModel):
@@ -10,3 +10,4 @@ class PhoneNumber(BaseModel):
 class ChargeCodeCacheKey(BaseModel):
     code: str
     phone: PhoneNumber
+    is_collected: Optional[bool] = False  # Means collected by task to be mapped on db

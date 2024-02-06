@@ -19,3 +19,7 @@ class CacheTest(TestCase):
         self.cache_handler.set(code, dt)
         cache_value = self.cache_handler.get(code)
         self.assertEqual(cache_value, dt)
+        inquiry_result = self.cache_handler.inquiry_charge_codes(
+            phone_pattern=self.phone, code_pattern=self.code
+        )
+        self.assertEqual(len(inquiry_result), 1)
