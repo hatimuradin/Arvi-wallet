@@ -39,4 +39,13 @@ def collect_charge_codes():
                 )
 
 
-scheduler.add_job(collect_charge_codes, "interval", seconds=1)
+def collect_transactions():
+    """
+    This task is responsible for collecting used charged codes from database and send to wallet
+    """
+    to_be_sent_codes = db_handler.get_not_applied_used_charge_codes()
+    ##
+
+
+# scheduler.add_job(collect_charge_codes, "interval", seconds=1)
+# scheduler.add_job(collect_charge_codes, "interval", seconds=5)

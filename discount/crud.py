@@ -1,11 +1,16 @@
+from typing import List
 from datetime import datetime
-from sqlmodel import select
+from sqlmodel import select, and_
 import redis
 
 from common.utils import Singleton
 from discount.models import ChargeCode, DiscountCode
 from discount.database import get_session
-from discount.settings import DISCOUNT_DB_LOCK_NAME, LOCK_BLOCKING_TIME_OUT
+from discount.settings import (
+    DISCOUNT_DB_LOCK_NAME,
+    LOCK_BLOCKING_TIME_OUT,
+    LOCK_TIME_OUT,
+)
 
 
 class DBHandler(metaclass=Singleton):
@@ -15,7 +20,9 @@ class DBHandler(metaclass=Singleton):
 
     def use_code(self, code: str, phone: str):
         with self.r.lock(
-            DISCOUNT_DB_LOCK_NAME, blocking_timeout=LOCK_BLOCKING_TIME_OUT
+            DISCOUNT_DB_LOCK_NAME,
+            blocking_timeout=LOCK_BLOCKING_TIME_OUT,
+            timeout=LOCK_TIME_OUT,
         ):
             try:
                 query = select(ChargeCode).where(
@@ -30,8 +37,22 @@ class DBHandler(metaclass=Singleton):
             except:
                 self.db.rollback()
 
-    # def update_charge_code(self, phone: str, code: str):
-    #     charge_code = self.db.exec(select)
+    # def get_not_applied_used_charge_codes(self):
+    #     charge_code = self.db.exec(select(ChargeCode)).all()
 
-    #     transactions = self.db.exec(query).all()
-    #     return transactions
+    def get_succeeded_users_for_code(self, code: str) -> List[str]:
+        with self.r.lock(
+            DISCOUNT_DB_LOCK_NAME,
+            blocking_timeout=LOCK_BLOCKING_TIME_OUT,
+            timeout=LOCK_TIME_OUT,
+        ):
+            query = select(ChargeCode).where(
+                and_(
+                    ChargeCode.is_used,
+                    ChargeCode.is_applied,
+                    ChargeCode.code == code,
+                )
+            )
+            succeeded_codes = self.db.exec(query).all()
+        succeeded_users = [c.user_phone for c in succeeded_codes]
+        return succeeded_users
