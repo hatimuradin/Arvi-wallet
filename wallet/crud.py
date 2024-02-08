@@ -14,7 +14,7 @@ from wallet.settings import WALLET_DB_LOCK_NAME, LOCK_BLOCKING_TIME_OUT, LOCK_TI
 class DBHandler(metaclass=Singleton):
     def __init__(self):
         self.db = next(get_session())
-        self.r = redis.StrictRedis(host="redis-server", port=6379, db=0)
+        self.r = redis.StrictRedis(host="redis_server", port=6379, db=0)
 
     def get_user_transactions(self, phone: str):
         user = self.db.exec(select(User).where(User.phone == phone)).first()

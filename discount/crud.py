@@ -16,7 +16,7 @@ from discount.settings import (
 class DBHandler(metaclass=Singleton):
     def __init__(self):
         self.db = next(get_session())
-        self.r = redis.StrictRedis(host="redis-server", port="6379", db=0)
+        self.r = redis.StrictRedis(host="redis_server", port="6379", db=0)
 
     def use_code(self, code: str, phone: str):
         with self.r.lock(
