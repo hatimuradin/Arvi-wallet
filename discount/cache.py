@@ -11,7 +11,9 @@ CACHE_PREFIX = os.environ.get("CACHE_PREFIX")
 
 class CacheHandler(metaclass=Singleton):
     def __init__(self):
-        self.cache_handler = redis.StrictRedis(db=1)  # 0 is used for locks
+        self.cache_handler = redis.StrictRedis(
+            host="redis-server", port=6379, db=1
+        )  # 0 is used for locks
         super().__init__()
 
     def get(self, object: BaseModel) -> dict:

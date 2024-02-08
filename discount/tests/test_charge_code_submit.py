@@ -1,14 +1,15 @@
 from datetime import datetime
 from fastapi.testclient import TestClient
 
-from discount.main import app
+from discount.main import router
 from discount.cache import CacheHandler
 from discount.serializers import ChargeCodeCacheKey, PhoneNumber
 
 
 def test_submit_charge_code():
-    client = TestClient(app)
+    client = TestClient(router)
     cache_handler = CacheHandler()
+    cache_handler.delete_all()
     phone = "09109345575"
     code = "test_code"
 

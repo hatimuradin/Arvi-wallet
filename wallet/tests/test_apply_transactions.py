@@ -4,11 +4,10 @@ from sqlmodel import select
 
 from fastapi.testclient import TestClient
 
-from common.serializers import ApplyTransaction
 from wallet.database import init_db, drop_db
 from wallet.models import User, Wallet, Transaction
 from wallet.crud import DBHandler
-from wallet.main import app
+from wallet.main import router
 
 
 class ApplyTransactionsTestCase(TestCase):
@@ -16,7 +15,7 @@ class ApplyTransactionsTestCase(TestCase):
         init_db()
         self.db = DBHandler().db
         self.db.commit()
-        self.client = TestClient(app)
+        self.client = TestClient(router)
         self.phone = "09109345575"
         self.code = "test_code"
         super().setUp()
@@ -44,9 +43,7 @@ class ApplyTransactionsTestCase(TestCase):
             {"phone": "09101112323", "amount": 1_000_000},
             {"phone": "1111111111", "amount": 500_000},
         ]
-        response = self.client.post(
-            "/wallet/transactions/apply/", json=test_transactions
-        )
+        response = self.client.post("/apply-transactions/", json=test_transactions)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(db.exec(select(Transaction)).all()), 2)
         self.assertEqual(

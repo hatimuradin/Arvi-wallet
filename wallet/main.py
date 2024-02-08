@@ -10,9 +10,9 @@ db_handler = DBHandler()
 app = FastAPI()
 
 
-@app.on_event("startup")
-def on_startup():
-    init_db()
+# @app.on_event("startup")
+# def on_startup():
+#     init_db()
 
 
 @app.get("/users/{user_phone}/transactions/", response_model=List[TransactionResponse])
@@ -36,7 +36,7 @@ def read_user_balance(user_phone: str):
     return balance
 
 
-@app.post("/wallet/transactions/apply/")
+@app.post("/apply-transactions/")
 def apply_transactions(transactions: List[dict]):
     """
     API to receive transactions

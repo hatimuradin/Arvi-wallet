@@ -1,34 +1,20 @@
 version: '3.7'
 
 services:
-  gateway_service:
-    build: ./gateway
-    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-    volumes:
-      - ./gateway/:/app/
-    ports:
-      - 8001:8000
-    environment:
-      - WALLET_SERVICE_HOST_URL=http://wallet_service:8000/api/v1/wallet/
-      - DISCOUNT_SERVICE_HOST_URL=http://discount_service:8000/api/v1/discount/
 
-
-  wallet_service:
-    build: ./wallet
-    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-    volumes:
-      - ./wallet/:/app/
+  redis_server:
+    restart: on-failure
+    container_name: redis_server
+    image: redis:latest
     ports:
-      - 8002:8000
-    environment:
-      - DATABASE_URI=postgresql://${WALLET_DB_USERNAME}:${WALLET_DB_PASSWORD}@wallet_db/${WALLET_DB_NAME}
-    depends_on:
-      - wallet_db
+      - 6379:6379
 
   wallet_db:
     image: postgres:16.1-alpine
     volumes:
       - postgres_data_wallet:/var/lib/postgresql/data/
+    ports:
+      - 5434:5432
     environment:
       - POSTGRES_USER=${WALLET_DB_USERNAME}
       - POSTGRES_PASSWORD=${WALLET_DB_PASSWORD}
@@ -36,25 +22,12 @@ services:
     env_file:
       - .env
 
-  discount_service:
-    build: ./discount
-    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-    volumes:
-      - ./discount/:/app/
-    ports:
-      - 8003:8000
-    environment:
-      - DATABASE_URI=postgresql://${DISCOUNT_DB_USERNAME}:${DISCOUNT_DB_PASSWORD}@discount_db/${DISCOUNT_DB_NAME}
-      - WALLET_SERVICE_HOST_URL=http://wallet_service:8000/api/v1/wallet/
-    depends_on:
-      - redis_server
-      - discount_db
-      - wallet_service
-
   discount_db:
     image: postgres:16.1-alpine
     volumes:
       - postgres_data_discount:/var/lib/postgresql/data/
+    ports:
+      - 5433:5432
     environment:
       - POSTGRES_USER=${DISCOUNT_DB_USERNAME}
       - POSTGRES_PASSWORD=${DISCOUNT_DB_PASSWORD}
@@ -62,13 +35,53 @@ services:
     env_file:
       - .env
 
-  redis_server:
-    restart: on-failure
-    container_name: redis
-    image: redis:latest
+  wallet_service:
+    build:
+      context: .
+      dockerfile: ./wallet/Dockerfile
+    command: uvicorn wallet.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - .:/app/
     ports:
-      - 6379:6379
+      - 8002:8000
+    environment:
+      - WALLET_DATABASE_URI=postgresql://${WALLET_DB_USERNAME}:${WALLET_DB_PASSWORD}@wallet_db/${WALLET_DB_NAME}
+    depends_on:
+      - redis_server
+      - wallet_db
 
+  discount_service:
+    build:
+      context: .
+      dockerfile: ./discount/Dockerfile
+    command: uvicorn discount.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - .:/app/
+    ports:
+      - 8003:8000
+    environment:
+      - DISCOUNT_DATABASE_URI=postgresql://${DISCOUNT_DB_USERNAME}:${DISCOUNT_DB_PASSWORD}@discount_db/${DISCOUNT_DB_NAME}
+      - WALLET_SERVICE_HOST_URL=http://wallet_service:8000/api/v1/wallet/
+    depends_on:
+      - redis_server
+      - discount_db
+      - wallet_service
+
+  gateway_service:
+    build: 
+      context: .
+      dockerfile: ./gateway/Dockerfile
+    command: uvicorn gateway.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - .:/app/
+    ports:
+      - 8001:8000
+    environment:
+      - WALLET_SERVICE_HOST_URL=http://wallet_service:8002/api/v1/wallet/
+      - DISCOUNT_SERVICE_HOST_URL=http://discount_service:8003/api/v1/discount/
+    depends_on:
+      - wallet_service
+      - discount_service
 
 volumes:
   postgres_data_wallet:

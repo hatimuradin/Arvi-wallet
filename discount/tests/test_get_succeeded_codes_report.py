@@ -2,7 +2,7 @@ from unittest import TestCase
 from datetime import datetime
 from fastapi.testclient import TestClient
 
-from discount.main import app
+from discount.main import router
 from discount.database import init_db, drop_db
 from discount.crud import DBHandler
 from discount.models import ChargeCode
@@ -13,7 +13,7 @@ class ReportsTestCase(TestCase):
         init_db()
         self.db = DBHandler().db
         self.db.commit()
-        self.client = TestClient(app)
+        self.client = TestClient(router)
         self.code = "test_code"
         self.phone = "123872632"
         super().setUp()

@@ -16,7 +16,7 @@ from discount.settings import (
 class DBHandler(metaclass=Singleton):
     def __init__(self):
         self.db = next(get_session())
-        self.r = redis.StrictRedis(db=0)
+        self.r = redis.StrictRedis(host="redis-server", port="6379", db=0)
 
     def use_code(self, code: str, phone: str):
         with self.r.lock(
@@ -37,8 +37,13 @@ class DBHandler(metaclass=Singleton):
             except:
                 self.db.rollback()
 
-    # def get_not_applied_used_charge_codes(self):
-    #     charge_code = self.db.exec(select(ChargeCode)).all()
+    def get_not_applied_used_charge_codes(self):
+        charge_codes = self.db.exec(
+            select(ChargeCode).where(
+                and_(ChargeCode.is_used, ChargeCode.is_applied == False)
+            )
+        ).all()
+        return charge_codes
 
     def get_succeeded_users_for_code(self, code: str) -> List[str]:
         with self.r.lock(

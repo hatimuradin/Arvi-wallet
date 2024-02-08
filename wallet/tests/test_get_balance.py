@@ -1,14 +1,14 @@
 from datetime import datetime
 from fastapi.testclient import TestClient
 
-from wallet.main import app
+from wallet.main import router
 from wallet.database import init_db, drop_db
 from wallet.models import User, Wallet, Transaction
 from wallet.crud import DBHandler
 
 
 def test_read_user_transactions():
-    client = TestClient(app)
+    client = TestClient(router)
     init_db()
     db = DBHandler().db
 

@@ -13,13 +13,13 @@ app = FastAPI()
 
 @app.on_event("startup")
 def on_startup():
-    init_db()
-    # scheduler.start()
+    # init_db()
+    scheduler.start()
 
 
-# @app.on_event("shutdown")
-# async def shutdown_event():
-#     scheduler.shutdown()
+@app.on_event("shutdown")
+async def shutdown_event():
+    scheduler.shutdown()
 
 
 @app.post("/charge-code/submit/")

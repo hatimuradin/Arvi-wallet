@@ -2,7 +2,7 @@ from unittest import TestCase
 from datetime import datetime
 from fastapi.testclient import TestClient
 
-from discount.main import app
+from discount.main import router
 from discount.cache import CacheHandler
 from discount.serializers import ChargeCodeCacheKey, PhoneNumber
 from discount.tasks import collect_charge_codes
@@ -15,8 +15,9 @@ class SumbitChargeCodeTestCase(TestCase):
     def setUp(self):
         init_db()
         self.db = DBHandler().db
-        self.client = TestClient(app)
+        self.client = TestClient(router)
         self.cache_handler = CacheHandler()
+        self.cache_handler.delete_all()
         self.phone = "09109345575"
         self.code = "test_code"
         super().setUp()
