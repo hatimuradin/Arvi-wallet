@@ -9,6 +9,7 @@ class ChargeCode(SQLModel, table=True):
     id: int = Field(primary_key=True, index=True)
     code: str
     created_at: datetime = Field(sa_column_kwargs={"default": datetime.utcnow()})
+    amount: int
     is_used: bool = Field(default=False)  # Means user submitted this code
     used_at: Optional[datetime]
     is_applied: bool = Field(

@@ -5,9 +5,7 @@ from sqlmodel import create_engine, SQLModel, Session
 
 DATABASE_URL = os.environ.get("DISCOUNT_DATABASE_URI")
 
-engine = create_engine(
-    DATABASE_URL, echo=True, connect_args={"check_same_thread": False}
-)
+engine = create_engine(DATABASE_URL, echo=True)
 
 
 def init_db():

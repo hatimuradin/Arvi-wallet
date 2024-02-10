@@ -61,3 +61,16 @@ class DBHandler(metaclass=Singleton):
             succeeded_codes = self.db.exec(query).all()
         succeeded_users = [c.user_phone for c in succeeded_codes]
         return succeeded_users
+
+    def set_applied_for_codes(self, codes: List[ChargeCode]):
+        try:
+            with self.r.lock(
+                DISCOUNT_DB_LOCK_NAME,
+                blocking_timeout=LOCK_BLOCKING_TIME_OUT,
+                timeout=LOCK_TIME_OUT,
+            ):
+                for c in codes:
+                    c.is_applied = True
+                self.db.commit()
+        except redis.exceptions.LockNotOwnedError as e:
+            pass

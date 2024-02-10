@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from wallet.database import init_db, drop_db
 from wallet.models import User, Wallet, Transaction
 from wallet.crud import DBHandler
-from wallet.main import router
+from wallet.main import app
 
 
 class ApplyTransactionsTestCase(TestCase):
@@ -15,7 +15,7 @@ class ApplyTransactionsTestCase(TestCase):
         init_db()
         self.db = DBHandler().db
         self.db.commit()
-        self.client = TestClient(router)
+        self.client = TestClient(app)
         self.phone = "09109345575"
         self.code = "test_code"
         super().setUp()

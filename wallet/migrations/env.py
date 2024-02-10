@@ -9,7 +9,7 @@ from sqlmodel import SQLModel
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-from discount.models import *
+from wallet.models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
