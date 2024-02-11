@@ -58,11 +58,11 @@ def collect_transactions():
     ## send to wallet transactions api
     if transaction_list:
         response = requests.post(
-            "http://wallet_service/apply-transactions/", json=transaction_list
+            "http://wallet_service:8000/apply-transactions/", json=transaction_list
         )
         if response.status_code == 200:
             db_handler.set_applied_for_codes(to_be_sent_codes)
 
 
-# scheduler.add_job(collect_charge_codes, "interval", seconds=1)
-# scheduler.add_job(collect_transactions, "interval", seconds=5)
+scheduler.add_job(collect_charge_codes, "interval", minutes=1)
+scheduler.add_job(collect_transactions, "interval", minutes=5)

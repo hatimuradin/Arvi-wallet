@@ -71,6 +71,7 @@ class DBHandler(metaclass=Singleton):
             ):
                 for c in codes:
                     c.is_applied = True
+                    c.applied_at = datetime.utcnow()
                 self.db.commit()
         except redis.exceptions.LockNotOwnedError as e:
             pass

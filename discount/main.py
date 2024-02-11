@@ -23,7 +23,7 @@ async def shutdown_event():
 
 
 @app.post("/charge-code/submit/")
-def submit_charge_code(data: dict):
+async def submit_charge_code(data: dict):
     """
     API to receive user charge codes
     """
